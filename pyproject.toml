@@ -1,0 +1,16 @@
+[project]
+name = "playwright-pytest-e2e"
+version = "0.1.0"
+description = "Playwright + Pytest E2E"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "allure-pytest>=2.16.0",
+    "faker>=40.21.0",
+    "playwright>=1.60.0",
+    "pytest>=9.0.3",
+    "pytest-html>=4.2.0",
+    "pytest-playwright>=0.8.0",
+    "pytest-xdist>=3.8.0",
+    "python-dotenv>=1.2.2",
+]
