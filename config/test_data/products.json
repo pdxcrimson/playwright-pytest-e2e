@@ -1,0 +1,18 @@
+{
+  "sauce_labs_backpack": {
+    "name": "Sauce Labs Backpack",
+    "price": 29.99
+  },
+  "sauce_labs_bike_light": {
+    "name": "Sauce Labs Bike Light",
+    "price": 9.99
+  },
+  "sauce_labs_bolt_tshirt": {
+    "name": "Sauce Labs Bolt T-Shirt",
+    "price": 15.99
+  },
+  "sauce_labs_fleece_jacket": {
+    "name": "Sauce Labs Fleece Jacket",
+    "price": 49.99
+  }
+}
