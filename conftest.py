@@ -10,9 +10,29 @@ from pages.login_page import LoginPage
 # ---------------------------------------------------------------------------
 
 @pytest.fixture(scope="session")
-def browser_instance():
+def browser_instance(request):
+    # 1. Fetch the value from the CLI
+    browser_input = request.config.getoption("--browser", default="chromium")
+
+    # 2. Safely extract the string if it's a list, fallback if it's empty
+    if isinstance(browser_input, list):
+        if browser_input:
+            browser_name = browser_input[0]
+        else:
+            browser_name = "chromium"  # Fallback if list is empty []
+    else:
+        browser_name = browser_input or "chromium"  # Fallback if None/empty string
+
+    # 3. Spin up Playwright
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=HEADLESS, slow_mo=SLOW_MO)
+        if browser_name == "firefox":
+            browser_type = pw.firefox
+        elif browser_name == "webkit":
+            browser_type = pw.webkit
+        else:
+            browser_type = pw.chromium
+
+        browser = browser_type.launch(headless=HEADLESS, slow_mo=SLOW_MO)
         yield browser
         browser.close()
 
