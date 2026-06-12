@@ -1,6 +1,6 @@
 # playwright-pytest-e2e
 
-[![E2E Tests](https://github.com/yourusername/playwright-pytest-e2e/actions/workflows/e2e.yml/badge.svg)](https://github.com/yourusername/playwright-pytest-e2e/actions)
+[![E2E Tests](https://github.com/pdxcrimson/playwright-pytest-e2e/actions/workflows/e2e.yml/badge.svg)](https://github.com/pdxcrimson/playwright-pytest-e2e/actions)
 
 End-to-end test suite for [SauceDemo](https://www.saucedemo.com) built with Playwright + Pytest. Demonstrates production-grade SDET practices: Page Object Model, session-scoped auth fixtures, data-driven tests, parallel execution, and Allure reporting.
 
@@ -21,22 +21,61 @@ For tests that need preconditions (e.g. items in a cart), hitting the API direct
 
 ## Prerequisites
 
-This project uses **uv** for extremely fast dependency management and Python version control. You do not need to have a specific Python version pre-installed; `uv` will handle it for you.
+This project uses **uv** for extremely fast dependency management and Python version control. You do not need to have a specific Python version pre-installed — `uv` will handle it for you.
 
 ### Install uv
+
 - **macOS/Linux**: `curl -LsSf https://astral.sh/uv/install.sh | sh`
 - **Windows**: `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
+
+### Install Allure CLI
+
+Allure is a Java-based reporting tool installed separately from the Python dependencies.
+
+**Linux / WSL2:**
+```bash
+sudo apt update && sudo apt install -y default-jre
+wget https://github.com/allure-framework/allure2/releases/download/2.29.0/allure_2.29.0-1_all.deb
+sudo dpkg -i allure_2.29.0-1_all.deb
+```
+
+**macOS:**
+```bash
+brew install allure
+```
+
+**Windows:**
+```bash
+scoop install allure
+```
+
+> **Linux/WSL2 shortcut:** Run `./setup.sh` after cloning — it handles Java, Allure, browsers, and Python dependencies in one step.
+
+---
 
 ## Installation & Setup
 
 1. **Clone the repository**:
-   ```
+   ```bash
    git clone https://github.com/pdxcrimson/playwright-pytest-e2e.git
    cd playwright-pytest-e2e
+   ```
+
 2. **Initialize the environment**:
-   ```uv sync```
-   
-_This command creates a `.venv`, installs Python >=3.10, and syncs all dependencies (playwright, pytest, faker, etc.) to your local machine._
+   ```bash
+   uv sync
+   ```
+   This creates a `.venv`, installs Python >=3.10, and syncs all dependencies (playwright, pytest, faker, etc.).
+
+3. **Install Playwright browsers**:
+   ```bash
+   uv run playwright install chromium firefox
+   ```
+
+4. **Linux / WSL2 only — install browser system dependencies**:
+   ```bash
+   sudo uv run playwright install-deps chromium
+   ```
 
 ---
 
@@ -44,23 +83,32 @@ _This command creates a `.venv`, installs Python >=3.10, and syncs all dependenc
 
 ```bash
 # Full suite
-pytest
+uv run pytest
+
+# Specific test file
+uv run pytest tests/test_auth.py -v
 
 # Specific marker
-pytest -m auth
-pytest -m checkout
+uv run pytest -m auth
+uv run pytest -m checkout
 
 # Single browser
-pytest --browser=firefox
+uv run pytest --browser=chromium
+uv run pytest --browser=firefox
 
-# Parallel (4 workers)
-pytest -n 4
+# Multiple browsers
+uv run pytest --browser=chromium --browser=firefox
 
-# Headed (watch the browser)
-HEADLESS=false pytest -m smoke
+# Parallel (auto-detect workers)
+uv run pytest -n auto
 
-# With Allure report
-pytest --alluredir=reports/allure-results
+# Headed mode (watch the browser — not supported in WSL2 without a display)
+HEADLESS=false uv run pytest -m smoke
+
+# Generate Allure results
+uv run pytest --alluredir=reports/allure-results
+
+# Serve the Allure report (opens in browser)
 allure serve reports/allure-results
 ```
 
@@ -88,7 +136,8 @@ allure serve reports/allure-results
 │   └── test_data/      # Static JSON fixtures
 ├── conftest.py         # Pytest fixtures: browser, auth session, screenshot hook
 ├── pytest.ini          # Markers, log config, test path
-└── .github/workflows/  # CI: lint → test (3 browsers, parallel) → Allure report
+├── setup.sh            # One-step setup for Linux / WSL2
+└── .github/workflows/  # CI: lint → test (Chromium + Firefox) → Allure report
 ```
 
 ---
@@ -96,8 +145,9 @@ allure serve reports/allure-results
 ## CI/CD
 
 The GitHub Actions workflow runs on every push and PR:
+
 1. **Lint** — black, flake8, isort
-2. **E2E** — runs in parallel across Chromium, Firefox, and WebKit
+2. **E2E** — runs in parallel across Chromium and Firefox
 3. **Report** — merges Allure results and publishes to GitHub Pages
 
 Test artifacts (screenshots, HTML reports) are retained for 30 days.
@@ -111,6 +161,7 @@ Test artifacts (screenshots, HTML reports) are retained for 30 days.
 | [Playwright](https://playwright.dev/python/) | Browser automation |
 | [Pytest](https://pytest.org) | Test runner + fixtures |
 | [pytest-xdist](https://github.com/pytest-dev/pytest-xdist) | Parallel test execution |
-| [Allure](https://allurereport.org) | HTML test reporting |
+| [Allure](https://allurereport.org) | Interactive HTML test reporting |
 | [Faker](https://faker.readthedocs.io) | Test data generation |
-| [pre-commit](https://pre-commit.com) | Code quality hooks |
+| [uv](https://docs.astral.sh/uv/) | Fast Python package manager |
+| [pre-commit](https://pre-commit.com) | Code quality hooks (black, flake8, isort) |
