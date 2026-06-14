@@ -1,9 +1,9 @@
 import pytest
 from playwright.sync_api import Page
 
-from pages.inventory_page import InventoryPage
 from pages.cart_page import CartPage
 from pages.checkout_page import CheckoutPage
+from pages.inventory_page import InventoryPage
 from utils.factories import make_checkout_info
 
 
