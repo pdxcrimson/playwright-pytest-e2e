@@ -52,11 +52,14 @@ class TestCheckout:
 
 
 @pytest.mark.checkout
-@pytest.mark.parametrize("first,last,postal,expected_error", [
-    ("",      "Smith", "98101", "First Name is required"),
-    ("Jane",  "",      "98101", "Last Name is required"),
-    ("Jane",  "Smith", "",      "Postal Code is required"),
-])
+@pytest.mark.parametrize(
+    "first,last,postal,expected_error",
+    [
+        ("", "Smith", "98101", "First Name is required"),
+        ("Jane", "", "98101", "Last Name is required"),
+        ("Jane", "Smith", "", "Postal Code is required"),
+    ],
+)
 def test_checkout_form_validation(auth_page: Page, first, last, postal, expected_error):
     """Data-driven validation — demonstrates pytest.mark.parametrize."""
     inventory = InventoryPage(auth_page)

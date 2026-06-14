@@ -24,6 +24,4 @@ def save_storage_state(page: Page) -> None:
 
 
 def assert_url_contains(page: Page, fragment: str) -> None:
-    assert fragment in page.url, (
-        f"Expected URL to contain '{fragment}', got: {page.url}"
-    )
+    assert fragment in page.url, f"Expected URL to contain '{fragment}', got: {page.url}"
