@@ -4,7 +4,6 @@ from playwright.sync_api import Browser, Page
 from config.env import HEADLESS, SLOW_MO, TIMEOUT, BASE_URL, STANDARD_USER, PASSWORD
 from pages.login_page import LoginPage
 
-
 # ---------------------------------------------------------------------------
 # Session-scoped: launch the browser for the run.
 #
@@ -13,6 +12,7 @@ from pages.login_page import LoginPage
 # --browser CLI flag(s) — do NOT add your own pytest_generate_tests hook
 # for it, or you'll get "duplicate parametrization of 'browser_name'".
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture(scope="session")
 def browser_instance(playwright, browser_name):
@@ -31,6 +31,7 @@ def browser_instance(playwright, browser_name):
 # ---------------------------------------------------------------------------
 # Session-scoped: perform login once, save storage state for reuse
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture(scope="session")
 def authenticated_context(browser_instance: Browser):
@@ -58,6 +59,7 @@ def authenticated_context(browser_instance: Browser):
 # Function-scoped: fresh page per test, but with pre-authenticated state
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def auth_page(browser_instance: Browser, authenticated_context: dict) -> Page:
     """
@@ -78,6 +80,7 @@ def auth_page(browser_instance: Browser, authenticated_context: dict) -> Page:
 # Function-scoped: unauthenticated page for login/error tests
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def page(browser_instance: Browser) -> Page:
     context = browser_instance.new_context(base_url=BASE_URL)
@@ -91,6 +94,7 @@ def page(browser_instance: Browser) -> Page:
 # Hooks
 # ---------------------------------------------------------------------------
 
+
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     """Capture a screenshot on test failure and attach to the report."""
@@ -101,12 +105,16 @@ def pytest_runtest_makereport(item, call):
         page: Page | None = item.funcargs.get("auth_page") or item.funcargs.get("page")
         if page:
             import os
+
             os.makedirs("reports/screenshots", exist_ok=True)
-            screenshot_path = f"reports/screenshots/{item.nodeid.replace('/', '_').replace('::', '__')}.png"
+            screenshot_path = (
+                f"reports/screenshots/{item.nodeid.replace('/', '_').replace('::', '__')}.png"
+            )
             page.screenshot(path=screenshot_path, full_page=True)
             # Attach to Allure report if available
             try:
                 import allure
+
                 allure.attach.file(
                     screenshot_path,
                     name="failure_screenshot",

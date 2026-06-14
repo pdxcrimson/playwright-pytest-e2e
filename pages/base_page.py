@@ -7,6 +7,7 @@ class BasePage:
 
     def navigate(self, path: str = "") -> None:
         from config.env import BASE_URL
+
         self.page.goto(f"{BASE_URL}{path}")
 
     def wait_for_url(self, url_fragment: str) -> None:
