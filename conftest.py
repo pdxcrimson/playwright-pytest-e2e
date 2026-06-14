@@ -1,40 +1,31 @@
 import pytest
-from playwright.sync_api import Browser, BrowserContext, Page, Playwright, sync_playwright
+from playwright.sync_api import Browser, Page
 
 from config.env import HEADLESS, SLOW_MO, TIMEOUT, BASE_URL, STANDARD_USER, PASSWORD
 from pages.login_page import LoginPage
 
 
 # ---------------------------------------------------------------------------
-# Session-scoped: one browser instance for the whole test run
+# Session-scoped: launch the browser for the run.
+#
+# `playwright` and `browser_name` are fixtures provided automatically by
+# pytest-playwright. `browser_name` is already parametrized from the
+# --browser CLI flag(s) — do NOT add your own pytest_generate_tests hook
+# for it, or you'll get "duplicate parametrization of 'browser_name'".
 # ---------------------------------------------------------------------------
 
 @pytest.fixture(scope="session")
-def browser_instance(request):
-    # 1. Fetch the value from the CLI
-    browser_input = request.config.getoption("--browser", default="chromium")
-
-    # 2. Safely extract the string if it's a list, fallback if it's empty
-    if isinstance(browser_input, list):
-        if browser_input:
-            browser_name = browser_input[0]
-        else:
-            browser_name = "chromium"  # Fallback if list is empty []
+def browser_instance(playwright, browser_name):
+    if browser_name == "firefox":
+        browser_type = playwright.firefox
+    elif browser_name == "webkit":
+        browser_type = playwright.webkit
     else:
-        browser_name = browser_input or "chromium"  # Fallback if None/empty string
+        browser_type = playwright.chromium
 
-    # 3. Spin up Playwright
-    with sync_playwright() as pw:
-        if browser_name == "firefox":
-            browser_type = pw.firefox
-        elif browser_name == "webkit":
-            browser_type = pw.webkit
-        else:
-            browser_type = pw.chromium
-
-        browser = browser_type.launch(headless=HEADLESS, slow_mo=SLOW_MO)
-        yield browser
-        browser.close()
+    browser = browser_type.launch(headless=HEADLESS, slow_mo=SLOW_MO)
+    yield browser
+    browser.close()
 
 
 # ---------------------------------------------------------------------------
