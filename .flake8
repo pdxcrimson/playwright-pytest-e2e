@@ -1,0 +1,11 @@
+[flake8]
+max-line-length = 100
+ignore = E501,W503
+exclude =
+    .venv,
+    .git,
+    __pycache__,
+    reports,
+    build,
+    dist,
+    *.egg-info

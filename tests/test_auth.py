@@ -1,9 +1,9 @@
 import pytest
 from playwright.sync_api import Page
 
-from config.env import STANDARD_USER, LOCKED_USER, PASSWORD
-from pages.login_page import LoginPage
+from config.env import LOCKED_USER, PASSWORD, STANDARD_USER
 from pages.inventory_page import InventoryPage
+from pages.login_page import LoginPage
 
 
 @pytest.mark.auth

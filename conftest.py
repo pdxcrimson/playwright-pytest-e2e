@@ -1,7 +1,7 @@
 import pytest
 from playwright.sync_api import Browser, Page
 
-from config.env import HEADLESS, SLOW_MO, TIMEOUT, BASE_URL, STANDARD_USER, PASSWORD
+from config.env import BASE_URL, HEADLESS, PASSWORD, SLOW_MO, STANDARD_USER, TIMEOUT
 from pages.login_page import LoginPage
 
 # ---------------------------------------------------------------------------
