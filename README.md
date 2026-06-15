@@ -110,6 +110,7 @@ uv run pytest --alluredir=reports/allure-results
 
 # Serve the Allure report (opens in browser)
 allure serve reports/allure-results
+Note: allure not supported on WSL2 at this time; support will be added later.
 ```
 
 ---
