@@ -21,7 +21,7 @@ class TestCart:
         inventory.goto()
         inventory.add_item_to_cart("sauce-labs-backpack")
         inventory.add_item_to_cart("sauce-labs-bike-light")
-        
+
         expect(inventory.cart_badge).to_have_text("2")
         inventory.go_to_cart()
 

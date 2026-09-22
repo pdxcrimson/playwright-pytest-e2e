@@ -23,8 +23,8 @@ class CartPage(BasePage):
 
     def get_item_count(self) -> int:
         """Deprecated for test assertions: use expect_item_count() instead.
-        
-        This scalar evaluation evaluates immediately without polling, which causes 
+
+        This scalar evaluation evaluates immediately without polling, which causes
         flakiness during page transitions in CI environments.
         """
         return self.cart_items.count()
