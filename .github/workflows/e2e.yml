@@ -14,10 +14,10 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
 
@@ -38,10 +38,10 @@ jobs:
         browser: [chromium, firefox, webkit]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
 
@@ -58,17 +58,22 @@ jobs:
         run: |
           uv run pytest tests/ \
             --browser=${{ matrix.browser }} \
-            -n auto \
+            -n 2 \
+            --reruns 2 \
+            --reruns-delay 1 \
+            --tracing=retain-on-failure \
             --alluredir=reports/allure-results \
             --html=reports/report-${{ matrix.browser }}.html \
             --self-contained-html
 
-      - name: Upload test report
+      - name: Upload test report & traces
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: test-report-${{ matrix.browser }}
-          path: reports/
+          path: |
+            reports/
+            test-results/
           retention-days: 30
 
   allure-report:
@@ -79,8 +84,8 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
         with:
           path: all-reports/
       - name: Merge Allure results
@@ -93,8 +98,7 @@ jobs:
           gh_pages: gh-pages
           allure_report: allure-report
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: allure-report

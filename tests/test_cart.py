@@ -1,5 +1,5 @@
 import pytest
-from playwright.sync_api import Page
+from playwright.sync_api import Page, expect
 
 from pages.cart_page import CartPage
 from pages.inventory_page import InventoryPage
@@ -21,10 +21,12 @@ class TestCart:
         inventory.goto()
         inventory.add_item_to_cart("sauce-labs-backpack")
         inventory.add_item_to_cart("sauce-labs-bike-light")
+
+        expect(inventory.cart_badge).to_have_text("2")
         inventory.go_to_cart()
 
         cart = CartPage(auth_page)
-        assert cart.get_item_count() == 2
+        cart.expect_item_count(2)
 
     def test_remove_item_from_cart(self, auth_page: Page):
         inventory = InventoryPage(auth_page)
