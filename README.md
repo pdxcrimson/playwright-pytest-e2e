@@ -49,8 +49,6 @@ brew install allure
 scoop install allure
 ```
 
-> **Linux/WSL2 shortcut:** Run `./setup.sh` after cloning — it handles Java, Allure, browsers, and Python dependencies in one step.
-
 ---
 
 ## Installation & Setup
@@ -137,7 +135,6 @@ Note: allure not supported on WSL2 at this time; support will be added later.
 │   └── test_data/      # Static JSON fixtures
 ├── conftest.py         # Pytest fixtures: browser, auth session, screenshot hook
 ├── pytest.ini          # Markers, log config, test path
-├── setup.sh            # One-step setup for Linux / WSL2
 └── .github/workflows/  # CI: lint → test (Chromium + Firefox) → Allure report
 ```
 
