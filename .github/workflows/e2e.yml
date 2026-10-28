@@ -90,11 +90,26 @@ jobs:
         with:
           path: all-reports/
           
-      - name: Merge Allure results and generate report
-        uses: simple-elf/allure-report-action@v1.14
+      - name: Merge Allure results
+        run: |
+          mkdir -p reports/allure-results
+          find all-reports/ -name "*.json" -exec cp {} reports/allure-results/ \;
+          
+      - name: Setup Java (Required for Allure)
+        uses: actions/setup-java@v4
         with:
-          allure_results: all-reports
-          gh_pages: gh-pages
-          allure_report: allure-report
-          # Some versions allow passing parameters or using alternative non-docker runners, 
-          # or you can install Java + Allure via npm (npm install -g allure-commandline)
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Allure Commandline
+        run: npm install -g allure-commandline --save-dev
+
+      - name: Generate Allure Report
+        run: allure generate reports/allure-results -o allure-report --clean
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: allure-report
